@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Roblox Game Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'portal-dark': '#0f172a',
+                        'portal-blue': '#1e3a8a',
+                        'portal-accent': '#3b82f6',
+                    },
+                    animation: {
+                        'gradient': 'gradient 8s ease infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                    },
+                },
+                fontFamily: {
+                    'sans': ['Inter', 'sans-serif'],
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(45deg, #0f172a, #1e3a8a, #1e40af);
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-portal-dark text-white font-sans">
+    <div class="min-h-screen gradient-bg flex flex-col">
+        <!-- Navigation -->
+        <nav class="bg-black/50 backdrop-blur-md border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex-shrink-0">
+                            <span class="text-2xl font-bold text-portal-accent">RobloxPortal</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Login Form -->
+        <div class="flex-grow flex items-center justify-center px-4 sm:px-6 lg:px-8">
+            <div class="max-w-md w-full space-y-8 animate-fade-in">
+                <div class="bg-black/30 backdrop-blur-md p-8 rounded-xl border border-white/10">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-blue-600">
+                            Sign in to your account
+                        </h2>
+                    </div>
+                    <form class="mt-8 space-y-6" id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="space-y-4">
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-gray-300">
+                                    Email address
+                                </label>
+                                <input id="email" name="email" type="email" required 
+                                    autocomplete="email"
+                                    placeholder="Enter your email"
+                                    class="mt-1 block w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg 
+                                    text-white placeholder-gray-400 focus:ring-2 focus:ring-portal-accent focus:border-transparent
+                                    transition-all duration-300">
+                            </div>
+                            <div>
+                                <label for="password" class="block text-sm font-medium text-gray-300">
+                                    Password
+                                </label>
+                                <input id="password" name="password" type="password" required 
+                                    autocomplete="current-password"
+                                    placeholder="Enter your password"
+                                    class="mt-1 block w-full px-4 py-3 bg-black/50 border border-white/10 rounded-lg 
+                                    text-white placeholder-gray-400 focus:ring-2 focus:ring-portal-accent focus:border-transparent
+                                    transition-all duration-300">
+                            </div>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <input id="remember-me" name="remember-me" type="checkbox" 
+                                    class="h-4 w-4 bg-black/50 border-white/10 rounded text-portal-accent 
+                                    focus:ring-portal-accent">
+                                <label for="remember-me" class="ml-2 block text-sm text-gray-300">
+                                    Remember me
+                                </label>
+                            </div>
+                            <div class="text-sm">
+                                <a href="#" class="font-medium text-portal-accent hover:text-blue-500 transition-colors">
+                                    Forgot your password?
+                                </a>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button type="submit" 
+                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg
+                                text-white bg-portal-accent hover:bg-blue-500 focus:outline-none focus:ring-2 
+                                focus:ring-offset-2 focus:ring-portal-accent transition-all duration-300">
+                                Sign in
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-400">
+                            Don't have an account?
+                            <a href="register.html" class="font-medium text-portal-accent hover:text-blue-500 transition-colors">
+                                Register here
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    // Store the token
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect to dashboard (we'll create this later)
+                    window.location.href = '/dashboard.html';
+                } else {
+                    alert(data.message || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Login failed. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
