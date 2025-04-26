@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Game Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'portal-dark': '#0f172a',
+                        'portal-blue': '#1e3a8a',
+                        'portal-accent': '#3b82f6',
+                    },
+                    animation: {
+                        'gradient': 'gradient 8s ease infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                    },
+                    keyframes: {
+                        gradient: {
+                            '0%, 100%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'left center'
+                            },
+                            '50%': {
+                                'background-size': '200% 200%',
+                                'background-position': 'right center'
+                            },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                    },
+                },
+                fontFamily: {
+                    'sans': ['Inter', 'sans-serif'],
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(45deg, #0f172a, #1e3a8a, #1e40af);
+            background-size: 200% 200%;
+            animation: gradient 8s ease infinite;
+        }
+    </style>
+</head>
+<body class="bg-portal-dark text-white font-sans">
+    <div class="min-h-screen gradient-bg">
+        <!-- Navigation -->
+        <nav class="bg-black/50 backdrop-blur-md border-b border-white/10">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <a href="index.html" class="flex-shrink-0">
+                            <span class="text-2xl font-bold text-portal-accent">RobloxPortal</span>
+                        </a>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span id="username" class="text-gray-300"></span>
+                        <button onclick="handleLogout()" class="bg-portal-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Dashboard Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Player Stats Card -->
+                <div class="bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                    <h2 class="text-xl font-semibold mb-4">Player Statistics</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-gray-400">Deaths</p>
+                            <p id="deaths" class="text-2xl font-bold">0</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Playtime</p>
+                            <p id="playtime" class="text-2xl font-bold">0 minutes</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Last Played</p>
+                            <p id="lastPlayed" class="text-2xl font-bold">Never</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Server Status Card -->
+                <div class="bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                    <h2 class="text-xl font-semibold mb-4">Active Servers</h2>
+                    <div id="serverList" class="space-y-4">
+                        <!-- Server list will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Account Status Card -->
+                <div class="bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                    <h2 class="text-xl font-semibold mb-4">Account Status</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-gray-400">Account Type</p>
+                            <p id="accountType" class="text-2xl font-bold">Regular</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Standing</p>
+                            <p id="accountStanding" class="text-2xl font-bold">Good Standing</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Developer Section (conditionally shown) -->
+            <div id="devSection" class="hidden mt-8">
+                <h2 class="text-2xl font-bold mb-4">Developer Controls</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                        <h3 class="text-xl font-semibold mb-4">Server Management</h3>
+                        <div class="space-y-4">
+                            <button onclick="handleServerShutdown()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                Shutdown Server
+                            </button>
+                            <button onclick="handleServerMigrate()" class="w-full bg-portal-blue hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300">
+                                Migrate Server
+                            </button>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 backdrop-blur-md p-6 rounded-xl border border-white/10">
+                        <h3 class="text-xl font-semibold mb-4">Server Metrics</h3>
+                        <div id="serverMetrics" class="space-y-4">
+                            <!-- Server metrics will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token) {
+            window.location.href = '/login.html';
+        }
+
+        // Update UI with user info
+        document.getElementById('username').textContent = user.username;
+        document.getElementById('accountType').textContent = user.accountType;
+        document.getElementById('accountStanding').textContent = user.accountStanding;
+
+        // Show developer section if applicable
+        if (user.accountType === 'developer') {
+            document.getElementById('devSection').classList.remove('hidden');
+        }
+
+        // Fetch user stats
+        async function fetchUserStats() {
+            try {
+                const response = await fetch('http://localhost:3000/api/auth/me', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const stats = data.user.gameStats;
+                    document.getElementById('deaths').textContent = stats.deaths;
+                    document.getElementById('playtime').textContent = `${stats.playtime} minutes`;
+                    document.getElementById('lastPlayed').textContent = stats.lastPlayed ? new Date(stats.lastPlayed).toLocaleDateString() : 'Never';
+                }
+            } catch (error) {
+                console.error('Error fetching stats:', error);
+            }
+        }
+
+        // Fetch server list
+        async function fetchServers() {
+            try {
+                const response = await fetch('http://localhost:3000/api/game/servers', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const serverList = document.getElementById('serverList');
+                    serverList.innerHTML = data.data.map(server => `
+                        <div class="flex justify-between items-center p-3 bg-black/20 rounded-lg">
+                            <div>
+                                <p class="font-semibold">${server.id}</p>
+                                <p class="text-sm text-gray-400">${server.region}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-semibold">${server.players}/${server.maxPlayers}</p>
+                                <p class="text-sm text-gray-400">${server.moderatorsPresent ? '👮 Mod Present' : 'No Mod'}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error fetching servers:', error);
+            }
+        }
+
+        // Fetch server metrics (for developers)
+        async function fetchServerMetrics() {
+            if (user.accountType !== 'developer') return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/game/servers/server1/metrics', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    const metrics = data.data;
+                    document.getElementById('serverMetrics').innerHTML = `
+                        <div>
+                            <p class="text-gray-400">CPU Usage</p>
+                            <p class="text-xl font-bold">${metrics.cpu.usage}%</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Memory</p>
+                            <p class="text-xl font-bold">${metrics.memory.percentage}%</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-400">Network</p>
+                            <p class="text-xl font-bold">${metrics.network.latency}</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error fetching metrics:', error);
+            }
+        }
+
+        // Handle server shutdown
+        async function handleServerShutdown() {
+            if (!confirm('Are you sure you want to shutdown the server?')) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/game/servers/server1/shutdown', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert(data.message);
+                    fetchServers();
+                }
+            } catch (error) {
+                console.error('Error shutting down server:', error);
+                alert('Failed to shutdown server');
+            }
+        }
+
+        // Handle server migration
+        async function handleServerMigrate() {
+            const region = prompt('Enter target region (e.g., US West, Europe):');
+            if (!region) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/game/servers/server1/migrate', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ targetRegion: region })
+                });
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    alert(data.message);
+                    fetchServers();
+                }
+            } catch (error) {
+                console.error('Error migrating server:', error);
+                alert('Failed to migrate server');
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+
+        // Initial data fetch
+        fetchUserStats();
+        fetchServers();
+        fetchServerMetrics();
+
+        // Refresh data periodically
+        setInterval(() => {
+            fetchUserStats();
+            fetchServers();
+            fetchServerMetrics();
+        }, 30000); // Every 30 seconds
+    </script>
+</body>
+</html>
