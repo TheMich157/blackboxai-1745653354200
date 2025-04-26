@@ -18,16 +18,15 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Import MongoDB Memory Server
-const { MongoMemoryServer } = require('mongodb-memory-server');
-
-// Database connection
+// Database connection using MongoDB Atlas cluster
 async function connectDB() {
   try {
-    const mongod = await MongoMemoryServer.create();
-    const uri = mongod.getUri();
-    await mongoose.connect(uri);
-    console.log('Connected to MongoDB Memory Server');
+    const uri = "mongodb+srv://admin:admin@cluster0.1r1yo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('Connected to MongoDB Atlas Cluster');
   } catch (err) {
     console.error('MongoDB connection error:', err);
     process.exit(1);
@@ -42,12 +41,14 @@ const authRoutes = require('./routes/authRoutes');
 const gameRoutes = require('./routes/gameRoutes');
 const moderationRoutes = require('./routes/moderationRoutes');
 const robloxIntegrationRoutes = require('./routes/robloxIntegrationRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 // Mount routes
 app.use('/api/auth', authRoutes);
 app.use('/api/game', gameRoutes);
 app.use('/api/moderation', moderationRoutes);
 app.use('/api/roblox', robloxIntegrationRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
